@@ -2,7 +2,9 @@ from datetime import timedelta
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import User, OTP
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from .models import User, OTP, TechnicianProfile, PhysicianProfile, AdminProfile
 from common.utils import generate_random_otp
 from common.constants import OTP_EXPIRATION_MINUTES, MAX_OTP_ATTEMPTS
 
@@ -13,7 +15,7 @@ def get_user_by_email(email):
     except User.DoesNotExist:
         return None
 
-def create_user_with_otp(email, password):
+def create_user_with_otp(email, password, role):
     """Creates a new inactive user and generates an OTP for signup."""
     
     # Check if user already exists
@@ -27,11 +29,13 @@ def create_user_with_otp(email, password):
             # User exists but is inactive, perhaps tried to signup before.
             # We can update the password and send a new OTP.
             user.set_password(password)
+            user.role = role
             user.save()
     else:
         # Create new inactive user
         user = User.objects.create_user(email=email, password=password)
         user.is_active = False
+        user.role = role
         user.save()
 
     # Generate and send OTP (this also invalidates previous active OTPs)
@@ -59,14 +63,21 @@ def generate_otp(email, purpose='signup'):
 
 def send_signup_otp_email(email, otp_code):
     """Sends OTP via standard Django email backend."""
-    subject = "Confirm your signup"
-    message = f"Your verification code is: {otp_code}. It expires in {OTP_EXPIRATION_MINUTES} minutes."
+    subject = "PACS Reporting - Confirm your signup"
+    
+    context = {
+        'otp_code': otp_code,
+        'expiration_minutes': OTP_EXPIRATION_MINUTES,
+    }
+    html_message = render_to_string('emails/otp_email.html', context)
+    plain_message = strip_tags(html_message)
     
     send_mail(
         subject,
-        message,
+        plain_message,
         getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@example.com'),
         [email],
+        html_message=html_message,
         fail_silently=False,
     )
 
@@ -121,4 +132,25 @@ def activate_user(user):
     user.is_active = True
     user.is_verified = True
     user.save()
+    
+    # Create profile based on user role
+    if user.role == 'technician':
+        TechnicianProfile.objects.get_or_create(user=user)
+    elif user.role == 'physician':
+        PhysicianProfile.objects.get_or_create(user=user)
+    elif user.role == 'admin':
+        AdminProfile.objects.get_or_create(user=user)
+        
+    return user
+
+def resend_signup_otp(email):
+    """Resends a new OTP for a pending (inactive) user."""
+    user = get_user_by_email(email)
+    if not user:
+        raise ValueError("User not found.")
+    if user.is_active:
+        raise ValueError("User is already verified.")
+    
+    otp_obj = generate_otp(email, purpose='signup')
+    send_signup_otp_email(email, otp_obj.otp_code)
     return user
