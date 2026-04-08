@@ -8,4 +8,5 @@ redis>=5.0.0,<6.0
 python-dotenv>=1.0.0,<2.0
 gunicorn>=21.2.0,<22.0
 django-cors-headers>=4.0.0,<5.0
+dj-urls-panel==0.3.0
 

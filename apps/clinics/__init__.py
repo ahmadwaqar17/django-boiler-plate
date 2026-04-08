@@ -1,0 +1,1 @@
+# Init for clinics app

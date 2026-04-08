@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Third-party
+    'dj_urls_panel',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -34,6 +35,9 @@ INSTALLED_APPS = [
     
     # Local
     'apps.users.apps.UsersConfig',
+    'apps.clinics.apps.ClinicsConfig',
+    'apps.patients.apps.PatientsConfig',
+    'apps.studies.apps.StudiesConfig',
 ]
 
 MIDDLEWARE = [
