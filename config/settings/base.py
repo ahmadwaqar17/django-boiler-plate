@@ -110,6 +110,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'EXCEPTION_HANDLER': 'common.exception_handlers.custom_exception_handler',
+    'DEFAULT_RENDERER_CLASSES': (
+        'common.renderers.CustomRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
 }
 
 # JWT Configuration

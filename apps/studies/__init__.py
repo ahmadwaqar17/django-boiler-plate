@@ -1,1 +1,1 @@
-# Init for studies app
+# Studies app

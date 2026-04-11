@@ -1,1 +1,1 @@
-# Init for patients app
+# Patients app

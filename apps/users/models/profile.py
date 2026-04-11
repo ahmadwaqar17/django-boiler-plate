@@ -1,7 +1,9 @@
+import uuid
 from django.db import models
 from apps.users.models import User
 
 class TechnicianProfile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='technician_profile')
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -12,6 +14,7 @@ class TechnicianProfile(models.Model):
 
 
 class PhysicianProfile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='physician_profile')
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -22,6 +25,7 @@ class PhysicianProfile(models.Model):
 
 
 class AdminProfile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_profile')
     
     created_at = models.DateTimeField(auto_now_add=True)
