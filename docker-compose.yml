@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15
     environment:
-      - POSTGRES_DB=${DB_NAME:-django_boiler}
-      - POSTGRES_USER=${DB_USER:-postgres}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+      - POSTGRES_DB=django_boiler
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
@@ -20,7 +18,7 @@ services:
   django:
     build:
       context: .
-      dockerfile: docker/django/Dockerfile
+      dockerfile: docker/Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
@@ -29,14 +27,27 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
       - redis
+      - db
 
   celery-worker:
     build:
       context: .
-      dockerfile: docker/celery/Dockerfile
+      dockerfile: docker/Dockerfile
     command: celery -A config worker -l info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: celery -A config beat -l info
     volumes:
       - .:/app
     env_file:
