@@ -3,18 +3,15 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
 from .managers import UserManager
+from common.models import UUIDTimestampMixin
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+class User(AbstractBaseUser, PermissionsMixin, UUIDTimestampMixin):
     email = models.EmailField(unique=True, db_index=True)
     
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
-    
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -25,20 +22,18 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
-class OTP(models.Model):
+class OTP(UUIDTimestampMixin):
     PURPOSE_CHOICES = (
         ('signup', 'Signup'),
         ('password_reset', 'Password Reset'),
     )
     
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField()
     otp_code = models.CharField(max_length=6)
     purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES, default='signup')
     is_used = models.BooleanField(default=False)
     failed_attempts = models.IntegerField(default=0)
     expires_at = models.DateTimeField()
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def is_valid(self, max_attempts=5):
         if self.is_used:
