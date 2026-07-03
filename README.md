@@ -127,3 +127,6 @@ Provided endpoints currently cover the authentication flow using DRF:
 
 ## Formatting
 This project is configured to work smoothly with standard configurations of **Black** and **Ruff**.
+
+## Deployment
+Deployed via GitHub Actions CI/CD pipeline. Every push to `main` automatically deploys to EC2 using Docker.
