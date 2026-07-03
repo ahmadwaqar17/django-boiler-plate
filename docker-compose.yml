@@ -8,7 +8,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
-      - "6379:6379"
+      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -48,8 +48,10 @@ services:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
       - static_volume:/staticfiles
       - media_volume:/media
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - django
 
