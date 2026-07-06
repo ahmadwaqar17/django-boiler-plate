@@ -94,6 +94,17 @@ services:
       - redis
       - db
 
+  dozzle:
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    environment:
+      - DOZZLE_HOSTNAME=django-boiler-plate
+      - DOZZLE_BASE=/logs
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "${DOZZLE_PORT:-9999}:8080"
+
 volumes:
   postgres_data:
   static_volume:
