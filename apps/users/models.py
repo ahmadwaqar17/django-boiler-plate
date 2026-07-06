@@ -1,20 +1,23 @@
-import uuid
-from django.db import models
+from typing import ClassVar
+
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.db import models
 from django.utils import timezone
-from .managers import UserManager
+
 from common.models import UUIDTimestampMixin
+
+from .managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin, UUIDTimestampMixin):
     email = models.EmailField(unique=True, db_index=True)
-    
+
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS: ClassVar[list[str]] = []
 
     objects = UserManager()
 
@@ -24,13 +27,13 @@ class User(AbstractBaseUser, PermissionsMixin, UUIDTimestampMixin):
 
 class OTP(UUIDTimestampMixin):
     PURPOSE_CHOICES = (
-        ('signup', 'Signup'),
-        ('password_reset', 'Password Reset'),
+        ("signup", "Signup"),
+        ("password_reset", "Password Reset"),
     )
-    
+
     email = models.EmailField()
     otp_code = models.CharField(max_length=6)
-    purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES, default='signup')
+    purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES, default="signup")
     is_used = models.BooleanField(default=False)
     failed_attempts = models.IntegerField(default=0)
     expires_at = models.DateTimeField()

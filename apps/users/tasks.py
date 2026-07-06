@@ -1,11 +1,14 @@
-from celery import shared_task
 import time
+
+from celery import shared_task
+
 
 @shared_task
 def debug_task():
     """A sample debug task."""
     time.sleep(2)
-    return 'Debug task completed'
+    return "Debug task completed"
+
 
 @shared_task
 def future_send_email_task(subject, message, recipient_list):
