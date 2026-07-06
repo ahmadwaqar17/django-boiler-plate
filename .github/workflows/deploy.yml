@@ -18,3 +18,5 @@ jobs:
             cd ~/django-boiler-plate
             git pull origin main
             docker compose up -d --build
+            docker compose exec -T django python manage.py migrate --noinput
+            docker compose exec -T django python manage.py collectstatic --noinput
