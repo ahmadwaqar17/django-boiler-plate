@@ -86,10 +86,6 @@ Thumbs.db
 .LSOverride
 ._*
 
-# Logs (keep directory but not log files)
-logs/*.log
-!logs/.gitkeep
-
 # Docker
 .docker/
 
