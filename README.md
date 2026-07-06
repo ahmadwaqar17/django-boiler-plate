@@ -98,6 +98,10 @@ Environment variables are handled via `django-environ`. Copy `.env.example` to `
 **Redis & Celery:**
 - `REDIS_URL` - Redis connection URL for Celery task queue. Default: `redis://localhost:6379/0`
 
+**Nginx:**
+- `NGINX_SERVER_NAME` - Server name(s) for nginx `server_name` directive (e.g., `example.com 1.2.3.4 localhost`). Used in both HTTP and HTTPS server blocks.
+- `NGINX_DOMAIN` - Primary domain for Let's Encrypt SSL cert paths. Certs are expected at `/etc/letsencrypt/live/<NGINX_DOMAIN>/`.
+
 **Email (SMTP):**
 - `EMAIL_HOST` - SMTP server hostname (e.g., `smtp.gmail.com`)
 - `EMAIL_PORT` - SMTP port (usually 587 for TLS, 465 for SSL)
